@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class SimpleClassLoader extends ClassLoader {
     String[] dirs;
@@ -47,7 +45,6 @@ public class SimpleClassLoader extends ClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        System.out.println(name);
         try {
             Class clazz = findClass(name);
             return clazz;
@@ -60,6 +57,7 @@ public class SimpleClassLoader extends ClassLoader {
         for (String dir : dirs) {
             byte[] buf = getClassData(dir, name);
             if (buf != null) {
+                System.out.println("Loading class:" + name + " From: " + dir);
                 return defineClass(name, buf, 0, buf.length);
             }
         }
@@ -84,12 +82,5 @@ public class SimpleClassLoader extends ClassLoader {
             return null;
         }
         return buf;
-    }
-
-    public static void main(String[] args) throws Exception {
-        String pwd = Paths.get("").toAbsolutePath().toString();
-        ClassLoader cl = new SimpleClassLoader(pwd + "/build/classes/main/org/weli/classloader/tutorial/data/impl");
-        Class clazz = cl.loadClass("org.weli.classloader.tutorial.data.impl.ProductImpl");
-        System.out.println(clazz);
     }
 }
